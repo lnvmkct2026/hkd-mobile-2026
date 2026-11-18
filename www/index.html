@@ -167,27 +167,27 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
         <div>
           <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-s1">1. Hàng hóa (GTGT 1% • TNCN 0,5%)</label>
-          <input id="inp-hh" type="number" class="inp-pro" value="1200000000" />
+          <input id="inp-hh" type="text" inputmode="numeric" class="inp-pro money-inp" value="1.200.000.000" />
         </div>
         <div>
           <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-s2">2. Dịch vụ (GTGT 5% • TNCN 2%)</label>
-          <input id="inp-dv" type="number" class="inp-pro" value="400000000" />
+          <input id="inp-dv" type="text" inputmode="numeric" class="inp-pro money-inp" value="400.000.000" />
         </div>
         <div>
           <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-s3">3. Sản xuất, vận tải (GTGT 3% • TNCN 1,5%)</label>
-          <input id="inp-sx" type="number" class="inp-pro" value="0" />
+          <input id="inp-sx" type="text" inputmode="numeric" class="inp-pro money-inp" value="0" />
         </div>
         <div>
           <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-s4">4. Nội dung số / Đại lý (GTGT 5% • TNCN 5%)</label>
-          <input id="inp-nds" type="number" class="inp-pro" value="0" />
+          <input id="inp-nds" type="text" inputmode="numeric" class="inp-pro money-inp" value="0" />
         </div>
         <div>
           <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-cp">5. Chi phí hợp lệ (so Cách 2 - 15%)</label>
-          <input id="inp-cp" type="number" class="inp-pro" value="1150000000" />
+          <input id="inp-cp" type="text" inputmode="numeric" class="inp-pro money-inp" value="1.150.000.000" />
         </div>
         <div>
           <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-san">6. Thuế sàn Shopee/TikTok đã khấu trừ</label>
-          <input id="inp-san" type="number" class="inp-pro" value="4500000" />
+          <input id="inp-san" type="text" inputmode="numeric" class="inp-pro money-inp" value="4.500.000" />
         </div>
       </div>
       <button type="button" id="btn-calc-tax" class="btn-gold w-full text-sm">⚡ TÍNH THUẾ &amp; SO SÁNH 2 CÁCH</button>
@@ -227,7 +227,7 @@
       </div>
       <div>
         <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-l-amt">Số tiền (VNĐ)</label>
-        <input id="led-amt" type="number" class="inp-pro" value="12500000" />
+        <input id="led-amt" type="text" inputmode="numeric" class="inp-pro money-inp" value="12.500.000" />
       </div>
       <div class="grid grid-cols-2 gap-2">
         <button type="button" id="btn-add-led" class="btn-gold text-xs">➕ Thêm dòng sổ</button>
@@ -251,7 +251,7 @@
       <div class="grid grid-cols-2 gap-2">
         <div>
           <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-r-rent">Tiền thuê / tháng (VNĐ)</label>
-          <input id="ren-monthly" type="number" class="inp-pro" value="95000000" />
+          <input id="ren-monthly" type="text" inputmode="numeric" class="inp-pro money-inp" value="95.000.000" />
         </div>
         <div>
           <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-r-months">Số tháng cho thuê/năm</label>
@@ -270,7 +270,7 @@
       <div class="grid grid-cols-3 gap-2">
         <div>
           <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-p-sal">Lương tháng</label>
-          <input id="pay-gross" type="number" class="inp-pro" value="18000000" />
+          <input id="pay-gross" type="text" inputmode="numeric" class="inp-pro money-inp" value="18.000.000" />
         </div>
         <div>
           <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-p-npt">Số NPT</label>
@@ -293,7 +293,7 @@
       <div class="grid grid-cols-2 gap-2">
         <div>
           <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-late-amt">Số tiền thuế chậm (VNĐ)</label>
-          <input id="late-amt" type="number" class="inp-pro" value="15000000" />
+          <input id="late-amt" type="text" inputmode="numeric" class="inp-pro money-inp" value="15.000.000" />
         </div>
         <div>
           <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-late-days">Số ngày chậm nộp</label>
@@ -417,12 +417,12 @@
 
   // Tax Calculator (1B Threshold + Optimal Deduction + Method 1 vs Method 2)
   function calcTax() {
-    const hh = Math.max(0, Number(document.getElementById("inp-hh").value) || 0);
-    const dv = Math.max(0, Number(document.getElementById("inp-dv").value) || 0);
-    const sx = Math.max(0, Number(document.getElementById("inp-sx").value) || 0);
-    const nds = Math.max(0, Number(document.getElementById("inp-nds").value) || 0);
-    const cp = Math.max(0, Number(document.getElementById("inp-cp").value) || 0);
-    const san = Math.max(0, Number(document.getElementById("inp-san").value) || 0);
+    const hh = Math.max(0, parseMoney("inp-hh") || 0);
+    const dv = Math.max(0, parseMoney("inp-dv") || 0);
+    const sx = Math.max(0, parseMoney("inp-sx") || 0);
+    const nds = Math.max(0, parseMoney("inp-nds") || 0);
+    const cp = Math.max(0, parseMoney("inp-cp") || 0);
+    const san = Math.max(0, parseMoney("inp-san") || 0);
     const total = hh + dv + sx + nds;
 
     if (total <= 1000000000) {
@@ -498,7 +498,7 @@
 
   // Rental
   function calcRental() {
-    const m = Math.max(0, Number(document.getElementById("ren-monthly").value) || 0);
+    const m = Math.max(0, parseMoney("ren-monthly") || 0);
     const k = Math.max(1, Math.min(12, Number(document.getElementById("ren-months").value) || 12));
     const total = m * k;
     if (total <= 1000000000) {
@@ -516,7 +516,7 @@
 
   // Payroll & Late Interest
   function calcPayroll() {
-    const gross = Math.max(0, Number(document.getElementById("pay-gross").value) || 0);
+    const gross = Math.max(0, parseMoney("pay-gross") || 0);
     const npt = Math.max(0, Number(document.getElementById("pay-npt").value) || 0);
     const hasBh = document.getElementById("pay-bh").value === "1";
     const bhNld = hasBh ? gross * 0.105 : 0;
@@ -620,7 +620,7 @@
 
   document.getElementById("btn-calc-tax").addEventListener("click", calcTax);
   document.getElementById("btn-add-led").addEventListener("click", () => {
-    const amt = Number(document.getElementById("led-amt").value) || 0;
+    const amt = parseMoney("led-amt") || 0;
     if (amt <= 0) return;
     ledger.unshift({
       date: document.getElementById("led-date").value.trim() || "18/11/2026",
@@ -645,7 +645,7 @@
   document.getElementById("btn-calc-rent").addEventListener("click", calcRental);
   document.getElementById("btn-calc-pay").addEventListener("click", calcPayroll);
   document.getElementById("btn-calc-late").addEventListener("click", () => {
-    const amt = Math.max(0, Number(document.getElementById("late-amt").value) || 0);
+    const amt = Math.max(0, parseMoney("late-amt") || 0);
     const days = Math.max(0, Number(document.getElementById("late-days").value) || 0);
     document.getElementById("late-output").textContent = `Tiền chậm nộp (0,03%/ngày × ${days} ngày): ${fmtMoney(amt * 0.0003 * days)} đồng`;
   });
@@ -719,7 +719,50 @@
     }
   });
 
+
+  function formatMoneyDigits(raw, allowEmpty = false) {
+    let digits = String(raw || "").replace(/\D/g, "");
+    if (!digits) return allowEmpty ? "" : "0";
+    digits = digits.replace(/^0+(?=\d)/, "");
+    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  function parseMoney(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
+    const digits = String(el.value || "").replace(/\D/g, "");
+    return Number(digits) || 0;
+  }
+
+  function initMoneyInputs() {
+    document.querySelectorAll(".money-inp").forEach((inp) => {
+      inp.value = formatMoneyDigits(inp.value, false);
+      inp.addEventListener("focus", () => {
+        if (inp.value === "0") inp.select();
+      });
+      inp.addEventListener("input", () => {
+        const raw = inp.value;
+        const caret = inp.selectionStart || 0;
+        const digitsBefore = raw.slice(0, caret).replace(/\D/g, "").length;
+        const formatted = formatMoneyDigits(raw, true);
+        inp.value = formatted;
+        if (document.activeElement === inp) {
+          let pos = 0, seen = 0;
+          while (pos < formatted.length && seen < digitsBefore) {
+            if (/\d/.test(formatted[pos])) seen++;
+            pos++;
+          }
+          try { inp.setSelectionRange(pos, pos); } catch (e) {}
+        }
+      });
+      inp.addEventListener("blur", () => {
+        inp.value = formatMoneyDigits(inp.value, false);
+      });
+    });
+  }
+
   // Init
+  initMoneyInputs();
   const savedLedger = storageGet("lnvm_ledger", null);
   if (savedLedger) ledger = savedLedger;
   document.getElementById("ai-gemini-key").value = storageGet("lnvm_gemini_key", "");
