@@ -344,9 +344,10 @@
 <div id="lic-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 p-3">
   <div class="card-pro w-full max-w-md space-y-3" style="border-color:#F59E0B;">
     <div class="flex items-center justify-between">
-      <h3 style="color:var(--accent);" class="font-black text-sm" id="i18n-lic-h3">🛡️ BẢN QUYỀN 6 MỨC — LNVMKCT2026</h3>
+      <h3 style="color:var(--accent);" class="font-black text-sm" id="i18n-lic-h3">🛡️ BẢN QUYỀN 8 MỨC — LNVMKCT2026</h3>
       <button type="button" id="btn-close-lic" class="btn-sec px-2.5 py-1 min-h-[32px] text-xs">✕</button>
     </div>
+    <div id="lic-status-box" class="p-2.5 rounded-xl text-xs font-bold" style="background:var(--bg-input); border:1px solid #F59E0B; color:var(--accent);"></div>
     <div class="p-2.5 rounded-xl" style="background:var(--bg-input); border:1px solid var(--border);">
       <div class="text-[11px] font-bold" style="color:var(--text-sec);" id="i18n-lic-hwid">MÃ THIẾT BỊ CỦA BẠN (DEVICE HWID):</div>
       <div class="flex items-center justify-between mt-1">
@@ -354,7 +355,9 @@
         <button type="button" id="btn-copy-hwid" class="btn-gold text-xs px-2.5 py-1 min-h-[32px]">📋 Copy</button>
       </div>
     </div>
-    <div class="grid grid-cols-3 gap-1.5 text-[11px] font-bold text-center">
+    <div class="grid grid-cols-4 gap-1.5 text-[11px] font-bold text-center">
+      <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid #38BDF8; color:#38BDF8;">7D (7d)</div>
+      <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid #38BDF8; color:#38BDF8;">30D (30d)</div>
       <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid var(--border);">3M (90d)</div>
       <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid var(--border);">6M (180d)</div>
       <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid #F59E0B; color:#F59E0B;">1Y (365d) ★</div>
@@ -362,7 +365,7 @@
       <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid var(--border);">5Y (1825d)</div>
       <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid #10B981; color:#10B981;">LIFETIME 👑</div>
     </div>
-    <input id="inp-lic-key" type="text" class="inp-pro font-mono text-xs" placeholder="LNVM-HKD2026-1Y-..." />
+    <input id="inp-lic-key" type="text" class="inp-pro font-mono text-xs" placeholder="LNVM-HKD2026-7D-... / 30D / 1Y" />
     <button type="button" id="btn-activate-lic" class="btn-gold w-full text-xs">✓ KÍCH HOẠT BẢN QUYỀN NGAY</button>
     <div class="text-[11px] text-center" style="color:var(--text-sec);">Zalo nhận Key: <strong>0981212413</strong> • Gmail: <strong>lnvmkct2026@gmail.com</strong></div>
   </div>
@@ -595,7 +598,7 @@
     "btn-kb-search": "🔍 Search VN Tax DB (Offline)", "btn-google-free": "🌐 Ask Google (No Key)",
     "i18n-ai-k": "Google Gemini API Key (Optional for AI Expert):",
     "btn-gemini-ask": "🤖 Ask Gemini",
-    "i18n-lic-h3": "🛡️ 6-TIER LICENSE — LNVMKCT2026",
+    "i18n-lic-h3": "🛡️ 8-TIER LICENSE — LNVMKCT2026",
     "i18n-lic-hwid": "YOUR DEVICE HARDWARE ID (DEVICE HWID):",
     "btn-activate-lic": "✓ ACTIVATE LICENSE NOW"
   };
@@ -699,23 +702,91 @@
   });
 
   // License modal
+  const LIC_TIERS_DAYS = {
+    "7D": 7,
+    "30D": 30,
+    "3M": 90,
+    "6M": 180,
+    "1Y": 365,
+    "3Y": 1095,
+    "5Y": 1825,
+    "LIFETIME": 36500
+  };
+
+  function getLicenseState() {
+    const now = Date.now();
+    let trialStart = Number(storageGet("lnvm_trial_start", 0));
+    if (!trialStart || trialStart > now) {
+      trialStart = now;
+      storageSet("lnvm_trial_start", trialStart);
+    }
+    const activeLic = storageGet("lnvm_active_license", null);
+    if (activeLic && activeLic.tier && LIC_TIERS_DAYS[activeLic.tier]) {
+      if (activeLic.tier === "LIFETIME") {
+        return { valid: true, mode: "LIFETIME", tier: "LIFETIME", daysLeft: 36500, key: activeLic.key };
+      }
+      const daysLeft = Math.max(0, Math.ceil((activeLic.expiresAt - now) / 86400000));
+      return { valid: now <= activeLic.expiresAt, mode: "LICENSED", tier: activeLic.tier, daysLeft, key: activeLic.key };
+    }
+    // Default: 7-day trial
+    const trialExpire = trialStart + 7 * 86400000;
+    const daysLeft = Math.max(0, Math.ceil((trialExpire - now) / 86400000));
+    return { valid: now <= trialExpire, mode: "TRIAL7D", tier: "7D", daysLeft, key: "" };
+  }
+
+  function refreshLicenseUI() {
+    const st = getLicenseState();
+    const pill = document.getElementById("lic-sub-pill");
+    const box = document.getElementById("lic-status-box");
+    const isEn = lang === "EN";
+    if (st.mode === "LIFETIME") {
+      pill.textContent = isEn ? "Lifetime Licensed • " + hwid : "Bản quyền Vĩnh viễn • " + hwid;
+      box.textContent = isEn ? "✅ Active: LIFETIME License (Unlimited)" : "✅ Đang kích hoạt: Gói VĨNH VIỄN (Không giới hạn)";
+      box.style.borderColor = "#10B981"; box.style.color = "#10B981";
+    } else if (st.mode === "LICENSED") {
+      if (st.valid) {
+        pill.textContent = (isEn ? `Plan ${st.tier} (${st.daysLeft}d left)` : `Gói ${st.tier} (còn ${st.daysLeft} ngày)`) + " • " + hwid;
+        box.textContent = isEn ? `✅ Active Plan ${st.tier} — ${st.daysLeft} day(s) remaining` : `✅ Đang kích hoạt gói ${st.tier} — Còn ${st.daysLeft} ngày sử dụng`;
+        box.style.borderColor = "#10B981"; box.style.color = "#10B981";
+      } else {
+        pill.textContent = (isEn ? `Expired (${st.tier})` : `Hết hạn (${st.tier})`) + " • " + hwid;
+        box.textContent = isEn ? `⚠️ License ${st.tier} expired. Please enter a new key.` : `⚠️ Gói ${st.tier} đã hết hạn. Vui lòng nhập Key mới.`;
+        box.style.borderColor = "#EF4444"; box.style.color = "#EF4444";
+      }
+    } else {
+      if (st.valid) {
+        pill.textContent = (isEn ? `7-Day Trial (${st.daysLeft}d left)` : `Dùng thử 7 ngày (còn ${st.daysLeft} ngày)`) + " • " + hwid;
+        box.textContent = isEn ? `🕒 Default 7-Day Trial — ${st.daysLeft} day(s) remaining` : `🕒 Mặc định Dùng thử 7 ngày — Còn ${st.daysLeft} ngày sử dụng`;
+        box.style.borderColor = "#F59E0B"; box.style.color = "var(--accent)";
+      } else {
+        pill.textContent = (isEn ? "Trial Expired" : "Hết hạn dùng thử 7 ngày") + " • " + hwid;
+        box.textContent = isEn ? "⚠️ 7-Day Trial expired. Please activate a license key." : "⚠️ Đã hết hạn dùng thử 7 ngày. Vui lòng nhập Key bản quyền.";
+        box.style.borderColor = "#EF4444"; box.style.color = "#EF4444";
+      }
+    }
+  }
+
   const licModal = document.getElementById("lic-modal");
-  document.getElementById("btn-open-lic").addEventListener("click", () => { licModal.classList.remove("hidden"); licModal.classList.add("flex"); });
+  document.getElementById("btn-open-lic").addEventListener("click", () => { refreshLicenseUI(); licModal.classList.remove("hidden"); licModal.classList.add("flex"); });
   document.getElementById("btn-close-lic").addEventListener("click", () => { licModal.classList.add("hidden"); licModal.classList.remove("flex"); });
   document.getElementById("btn-copy-hwid").addEventListener("click", () => {
     if (navigator.clipboard) navigator.clipboard.writeText(hwid).catch(() => {});
     else { const t = document.createElement("textarea"); t.value = hwid; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
-    showToast("Đã sao chép Mã Thiết Bị: " + hwid);
+    showToast(lang === "EN" ? "Copied Device HWID: " + hwid : "Đã sao chép Mã Thiết Bị: " + hwid);
   });
   document.getElementById("btn-activate-lic").addEventListener("click", () => {
     const k = document.getElementById("inp-lic-key").value.trim().toUpperCase();
-    if (k.startsWith("LNVM-HKD2026-")) {
-      storageSet("lnvm_active_key", k);
-      document.getElementById("lic-sub-pill").textContent = "Đã kích hoạt • " + hwid;
+    const m = k.match(/^LNVM-HKD2026-(7D|30D|3M|6M|1Y|3Y|5Y|LIFETIME)-[A-Z0-9-]+$/);
+    if (m) {
+      const tier = m[1];
+      const days = LIC_TIERS_DAYS[tier];
+      const now = Date.now();
+      storageSet("lnvm_active_license", { key: k, tier, activatedAt: now, expiresAt: now + days * 86400000 });
+      refreshLicenseUI();
       licModal.classList.add("hidden"); licModal.classList.remove("flex");
-      showToast("Kích hoạt bản quyền thành công!");
+      showToast(lang === "EN" ? `Activated ${tier} license successfully!` : `Kích hoạt bản quyền ${tier} thành công!`);
     } else {
-      showToast("Mã Key chưa đúng định dạng LNVM-HKD2026-...");
+      showToast(lang === "EN" ? "Invalid key format. Use LNVM-HKD2026-(7D|30D|3M|6M|1Y|3Y|5Y|LIFETIME)-..." : "Mã Key chưa đúng định dạng LNVM-HKD2026-(7D|30D|3M|6M|1Y|3Y|5Y|LIFETIME)-...");
     }
   });
 
@@ -763,6 +834,7 @@
 
   // Init
   initMoneyInputs();
+  refreshLicenseUI();
   const savedLedger = storageGet("lnvm_ledger", null);
   if (savedLedger) ledger = savedLedger;
   document.getElementById("ai-gemini-key").value = storageGet("lnvm_gemini_key", "");
