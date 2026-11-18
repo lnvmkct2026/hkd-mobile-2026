@@ -1,0 +1,49 @@
+name: Build Android APK & iOS IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-android-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - run: npm install
+      - run: npx cap add android
+      - run: npx cap sync android
+      - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LNVMKCT_HKD_2026_Android_APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+  build-ios-ipa:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npx cap add ios
+      - run: npx cap sync ios
+      - name: Build unsigned IPA for Sideloadly / AltStore / Signing
+        run: |
+          cd ios/App
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -sdk iphoneos CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO build SYMROOT=build
+          mkdir -p Payload
+          cp -r build/Release-iphoneos/App.app Payload/
+          zip -r ../../LNVMKCT_HKD_2026_unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LNVMKCT_HKD_2026_iOS_IPA
+          path: LNVMKCT_HKD_2026_unsigned.ipa
