@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="HKD 2026" />
+<meta name="theme-color" content="#0F172A" />
+<title>LNVMKCT Hộ Kinh Doanh 2026 — Mobile (Android &amp; iOS)</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<style>
+  :root {
+    --bg-app: #090D16;
+    --bg-bar: #0F172A;
+    --bg-card: #151E32;
+    --bg-input: #090D16;
+    --border: #28354F;
+    --text: #F8FAFC;
+    --text-sec: #CBD5E1;
+    --accent: #F59E0B;
+    --emerald: #10B981;
+  }
+  html.light {
+    --bg-app: #E2E8F0;
+    --bg-bar: #F8FAFC;
+    --bg-card: #FFFFFF;
+    --bg-input: #F1F5F9;
+    --border: #CBD5E1;
+    --text: #0F172A;
+    --text-sec: #334155;
+    --accent: #B45309;
+    --emerald: #059669;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    background: var(--bg-app);
+    color: var(--text);
+    margin: 0;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: calc(74px + env(safe-area-inset-bottom));
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .card-pro {
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .inp-pro {
+    width: 100%;
+    background: var(--bg-input);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 15px;
+    font-weight: 700;
+    outline: none;
+  }
+  .inp-pro:focus { border-color: #F59E0B; }
+  .btn-gold {
+    background: linear-gradient(180deg, #D97706 0%, #92400E 100%);
+    color: #FFFFFF;
+    border: 1px solid #FBBF24;
+    border-radius: 11px;
+    font-weight: 800;
+    padding: 11px 14px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .btn-sec {
+    background: var(--bg-input);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    font-weight: 700;
+    padding: 10px 12px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .bottom-nav {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--bg-bar);
+    border-top: 1.5px solid var(--border);
+    padding-bottom: env(safe-area-inset-bottom);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    z-index: 40;
+  }
+  .nav-tab {
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-sec);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  .nav-tab.active {
+    color: #F59E0B;
+  }
+  .toast-msg {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #065F46;
+    color: #ECFDF5;
+    border: 1px solid #34D399;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    z-index: 90;
+    display: none;
+    max-width: 90vw;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast-msg"></div>
+
+<!-- MOBILE TOP BAR -->
+<header style="background:var(--bg-bar); border-bottom:1.5px solid var(--border);" class="sticky top-0 z-30 px-3 py-2.5 flex items-center justify-between gap-2">
+  <div class="flex items-center gap-2.5 min-w-0">
+    <div style="background:linear-gradient(180deg,#D97706,#92400E); border:1.5px solid #FBBF24;" class="w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs text-yellow-100 shrink-0">HKD</div>
+    <div class="min-w-0">
+      <div style="color:var(--accent);" class="font-black text-sm truncate" id="i18n-title">LNVMKCT HỘ KINH DOANH 2026</div>
+      <div style="color:var(--text-sec);" class="text-[11px] font-semibold truncate" id="lic-sub-pill">v1.0.0 • Android &amp; iOS</div>
+    </div>
+  </div>
+  <div class="flex items-center gap-1.5 shrink-0">
+    <button type="button" id="btn-lang" class="btn-sec text-xs px-2.5 py-1.5 min-h-[36px]">🇻🇳 VI</button>
+    <button type="button" id="btn-theme" class="btn-sec text-xs px-2.5 py-1.5 min-h-[36px]">🌙</button>
+    <button type="button" id="btn-open-lic" class="btn-gold text-xs px-2.5 py-1.5 min-h-[36px]">🔑</button>
+  </div>
+</header>
+
+<!-- MAIN MOBILE CONTENT -->
+<main class="max-w-3xl mx-auto px-3 pt-3 space-y-3">
+
+  <!-- TAB 1: TINH THUE HKD -->
+  <section id="view-tax" class="space-y-3">
+    <div class="card-pro space-y-2.5">
+      <div class="flex items-center justify-between">
+        <h2 style="color:var(--accent);" class="font-extrabold text-sm" id="i18n-t1-hdr">⚡ TÍNH THUẾ HKD 2026 (MỐC 1 TỶ - NĐ 141/2026)</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-s1">1. Hàng hóa (GTGT 1% • TNCN 0,5%)</label>
+          <input id="inp-hh" type="number" class="inp-pro" value="1200000000" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-s2">2. Dịch vụ (GTGT 5% • TNCN 2%)</label>
+          <input id="inp-dv" type="number" class="inp-pro" value="400000000" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-s3">3. Sản xuất, vận tải (GTGT 3% • TNCN 1,5%)</label>
+          <input id="inp-sx" type="number" class="inp-pro" value="0" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-s4">4. Nội dung số / Đại lý (GTGT 5% • TNCN 5%)</label>
+          <input id="inp-nds" type="number" class="inp-pro" value="0" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-cp">5. Chi phí hợp lệ (so Cách 2 - 15%)</label>
+          <input id="inp-cp" type="number" class="inp-pro" value="1150000000" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-san">6. Thuế sàn Shopee/TikTok đã khấu trừ</label>
+          <input id="inp-san" type="number" class="inp-pro" value="4500000" />
+        </div>
+      </div>
+      <button type="button" id="btn-calc-tax" class="btn-gold w-full text-sm">⚡ TÍNH THUẾ &amp; SO SÁNH 2 CÁCH</button>
+    </div>
+
+    <div class="card-pro">
+      <div class="flex items-center justify-between mb-2">
+        <span style="color:var(--accent);" class="font-extrabold text-xs" id="i18n-res-lbl">📋 KẾT QUẢ TÍNH THUẾ CHI TIẾT</span>
+        <span style="color:var(--emerald);" class="text-xs font-bold">✓ NĐ 141/2026</span>
+      </div>
+      <pre id="tax-output" style="background:var(--bg-input); border:1px solid var(--border); color:var(--text);" class="p-3 rounded-xl text-xs sm:text-sm font-mono whitespace-pre-wrap leading-relaxed overflow-x-auto"></pre>
+    </div>
+  </section>
+
+  <!-- TAB 2: GHI SO S1A/S2A -->
+  <section id="view-ledger" class="space-y-3 hidden">
+    <div class="card-pro space-y-2.5">
+      <h2 style="color:var(--accent);" class="font-extrabold text-sm" id="i18n-t2-hdr">📒 SỔ DOANH THU S1a / S2a-HKD (TT 152/2025)</h2>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-l-date">Ngày</label>
+          <input id="led-date" type="text" class="inp-pro" value="18/11/2026" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-l-src">Nguồn tiền</label>
+          <select id="led-src" class="inp-pro">
+            <option value="[TM]">[TM] Tiền mặt</option>
+            <option value="[CK]">[CK] Chuyển khoản</option>
+            <option value="[MoMo]">[MoMo] Ví điện tử</option>
+            <option value="[Sàn]">[Sàn] Shopee / TikTok</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-l-desc">Diễn giải bán hàng</label>
+        <input id="led-desc" type="text" class="inp-pro" value="Bán lẻ hàng hóa tại cửa hàng" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-l-amt">Số tiền (VNĐ)</label>
+        <input id="led-amt" type="number" class="inp-pro" value="12500000" />
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" id="btn-add-led" class="btn-gold text-xs">➕ Thêm dòng sổ</button>
+        <button type="button" id="btn-exp-csv" class="btn-sec text-xs">📥 Tải file Excel (.csv)</button>
+      </div>
+    </div>
+
+    <div class="card-pro space-y-2">
+      <div class="flex items-center justify-between">
+        <span style="color:var(--accent);" class="font-extrabold text-xs" id="i18n-l-list">DANH SÁCH DÒNG ĐÃ GHI</span>
+        <span id="led-total" style="color:var(--emerald);" class="font-extrabold text-xs">0 đ</span>
+      </div>
+      <div id="led-rows" class="space-y-1.5 text-xs"></div>
+    </div>
+  </section>
+
+  <!-- TAB 3: CHO THUE NHA -->
+  <section id="view-rental" class="space-y-3 hidden">
+    <div class="card-pro space-y-2.5">
+      <h2 style="color:var(--accent);" class="font-extrabold text-sm" id="i18n-t3-hdr">🏠 THUẾ CHO THUÊ NHÀ, MẶT BẰNG (MẪU 01/BĐS)</h2>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-r-rent">Tiền thuê / tháng (VNĐ)</label>
+          <input id="ren-monthly" type="number" class="inp-pro" value="95000000" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-r-months">Số tháng cho thuê/năm</label>
+          <input id="ren-months" type="number" class="inp-pro" value="12" min="1" max="12" />
+        </div>
+      </div>
+      <button type="button" id="btn-calc-rent" class="btn-gold w-full text-sm">⚡ TÍNH THUẾ CHO THUÊ BĐS</button>
+      <pre id="rent-output" style="background:var(--bg-input); border:1px solid var(--border); color:var(--text);" class="p-3 rounded-xl text-xs font-mono whitespace-pre-wrap leading-relaxed"></pre>
+    </div>
+  </section>
+
+  <!-- TAB 4: LUONG NV & CHAM NOP / LICH .ICS -->
+  <section id="view-payroll" class="space-y-3 hidden">
+    <div class="card-pro space-y-2.5">
+      <h2 style="color:var(--accent);" class="font-extrabold text-sm" id="i18n-t4-hdr">👥 LƯƠNG THỰC NHẬN, BHXH &amp; TNCN NHÂN VIÊN</h2>
+      <div class="grid grid-cols-3 gap-2">
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-p-sal">Lương tháng</label>
+          <input id="pay-gross" type="number" class="inp-pro" value="18000000" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-p-npt">Số NPT</label>
+          <input id="pay-npt" type="number" class="inp-pro" value="1" min="0" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);" id="i18n-p-bh">Đóng BHXH?</label>
+          <select id="pay-bh" class="inp-pro">
+            <option value="1">Có (10,5%)</option>
+            <option value="0">Không</option>
+          </select>
+        </div>
+      </div>
+      <button type="button" id="btn-calc-pay" class="btn-gold w-full text-sm">⚡ TÍNH LƯƠNG &amp; THUẾ TNCN</button>
+      <pre id="pay-output" style="background:var(--bg-input); border:1px solid var(--border); color:var(--text);" class="p-3 rounded-xl text-xs font-mono whitespace-pre-wrap leading-relaxed"></pre>
+    </div>
+
+    <div class="card-pro space-y-2.5">
+      <h2 style="color:var(--accent);" class="font-extrabold text-sm" id="i18n-t4-late">⏰ TIỀN CHẬM NỘP (0,03%/NGÀY) &amp; LỊCH THUẾ .ICS</h2>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);">Số tiền thuế chậm (VNĐ)</label>
+          <input id="late-amt" type="number" class="inp-pro" value="15000000" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);">Số ngày chậm nộp</label>
+          <input id="late-days" type="number" class="inp-pro" value="45" />
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" id="btn-calc-late" class="btn-gold text-xs">⚡ Tính tiền chậm nộp</button>
+        <button type="button" id="btn-dl-ics" class="btn-sec text-xs">📅 Tải lịch .ics (iPhone/Android)</button>
+      </div>
+      <div id="late-output" style="color:var(--emerald);" class="text-xs font-bold"></div>
+    </div>
+  </section>
+
+  <!-- TAB 5: TRO LY AI & CSDL LUAT THUE VN -->
+  <section id="view-ai" class="space-y-3 hidden">
+    <div class="card-pro space-y-2.5">
+      <h2 style="color:var(--accent);" class="font-extrabold text-sm" id="i18n-t5-hdr">🤖 TRỢ LÝ AI &amp; TRA CỨU LUẬT THUẾ VN 2026</h2>
+      <div>
+        <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);">Câu hỏi / Từ khóa tra cứu thuế:</label>
+        <input id="ai-query" type="text" class="inp-pro" value="Doanh thu 1,3 tỷ bán tạp hóa và Shopee nộp thuế gì 2026?" />
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" id="btn-kb-search" class="btn-sec text-xs">🔍 Tra CSDL Luật VN (Offline)</button>
+        <button type="button" id="btn-google-free" class="btn-gold text-xs">🌐 Hỏi Chị Google (Không Key)</button>
+      </div>
+      <div class="pt-1 border-t" style="border-color:var(--border);">
+        <label class="block text-xs font-bold mb-1" style="color:var(--text-sec);">Google Gemini API Key (Tùy chọn cho Chuyên gia AI):</label>
+        <div class="flex gap-2">
+          <input id="ai-gemini-key" type="password" class="inp-pro flex-1" placeholder="AIza..." />
+          <button type="button" id="btn-gemini-ask" class="btn-gold text-xs px-3 shrink-0">🤖 Hỏi Gemini</button>
+        </div>
+      </div>
+      <pre id="ai-output" style="background:var(--bg-input); border:1px solid var(--border); color:var(--text);" class="p-3 rounded-xl text-xs whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto"></pre>
+    </div>
+
+    <div class="card-pro text-xs space-y-1.5" style="color:var(--text-sec);">
+      <div class="font-extrabold" style="color:var(--accent);">📱 Hướng dẫn cài thành App trên iPhone &amp; Android:</div>
+      <div>• <strong>iPhone / iPad (Safari):</strong> Bấm nút <em>Chia sẻ (Share)</em> → chọn <strong>Thêm vào Màn hình chính (Add to Home Screen)</strong>.</div>
+      <div>• <strong>Android (Chrome):</strong> Bấm dấu <em>3 chấm (⋮)</em> → chọn <strong>Thêm vào Màn hình chính / Cài đặt ứng dụng</strong>.</div>
+      <div class="pt-1 font-bold" style="color:var(--text);">© 2026 LNVMKCT2026 • Zalo: 0981212413 • Gmail: lnvmkct2026@gmail.com</div>
+    </div>
+  </section>
+
+</main>
+
+<!-- LICENSE ACTIVATION MODAL (6 TIERS + DEVICE HWID) -->
+<div id="lic-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 p-3">
+  <div class="card-pro w-full max-w-md space-y-3" style="border-color:#F59E0B;">
+    <div class="flex items-center justify-between">
+      <h3 style="color:var(--accent);" class="font-black text-sm">🛡️ BẢN QUYỀN 6 MỨC — LNVMKCT2026</h3>
+      <button type="button" id="btn-close-lic" class="btn-sec px-2.5 py-1 min-h-[32px] text-xs">✕</button>
+    </div>
+    <div class="p-2.5 rounded-xl" style="background:var(--bg-input); border:1px solid var(--border);">
+      <div class="text-[11px] font-bold" style="color:var(--text-sec);">MÃ THIẾT BỊ CỦA BẠN (DEVICE HWID):</div>
+      <div class="flex items-center justify-between mt-1">
+        <span id="modal-hwid" class="font-mono font-black text-base" style="color:var(--emerald);">LNVM-XXXX-XXXX-XXXX</span>
+        <button type="button" id="btn-copy-hwid" class="btn-gold text-xs px-2.5 py-1 min-h-[32px]">📋 Copy</button>
+      </div>
+    </div>
+    <div class="grid grid-cols-3 gap-1.5 text-[11px] font-bold text-center">
+      <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid var(--border);">3M (90d)</div>
+      <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid var(--border);">6M (180d)</div>
+      <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid #F59E0B; color:#F59E0B;">1Y (365d) ★</div>
+      <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid var(--border);">3Y (1095d)</div>
+      <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid var(--border);">5Y (1825d)</div>
+      <div class="p-2 rounded-lg" style="background:var(--bg-input); border:1px solid #10B981; color:#10B981;">LIFETIME 👑</div>
+    </div>
+    <input id="inp-lic-key" type="text" class="inp-pro font-mono text-xs" placeholder="LNVM-HKD2026-1Y-..." />
+    <button type="button" id="btn-activate-lic" class="btn-gold w-full text-xs">✓ KÍCH HOẠT BẢN QUYỀN NGAY</button>
+    <div class="text-[11px] text-center" style="color:var(--text-sec);">Zalo nhận Key: <strong>0981212413</strong> • Gmail: <strong>lnvmkct2026@gmail.com</strong></div>
+  </div>
+</div>
+
+<!-- BOTTOM MOBILE NAVIGATION BAR (ANDROID & IOS) -->
+<nav class="bottom-nav">
+  <button type="button" class="nav-tab active" data-target="view-tax"><span>⚡</span><span id="nav-1">Tính Thuế</span></button>
+  <button type="button" class="nav-tab" data-target="view-ledger"><span>📒</span><span id="nav-2">Sổ S1a/S2a</span></button>
+  <button type="button" class="nav-tab" data-target="view-rental"><span>🏠</span><span id="nav-3">Thuê Nhà</span></button>
+  <button type="button" class="nav-tab" data-target="view-payroll"><span>👥</span><span id="nav-4">Lương/Lịch</span></button>
+  <button type="button" class="nav-tab" data-target="view-ai"><span>🤖</span><span id="nav-5">AI &amp; Luật</span></button>
+</nav>
+
+<script>
+(function() {
+  let lang = "vi";
+  let theme = "dark";
+  let ledger = [
+    { date: "05/11/2026", src: "[TM]", desc: "Bán hàng tại cửa hàng", amt: 12500000 },
+    { date: "12/11/2026", src: "[CK]", desc: "Khách chuyển khoản đơn sỉ", amt: 45000000 },
+    { date: "15/11/2026", src: "[Sàn]", desc: "Doanh thu Shopee tháng 11", amt: 68000000 }
+  ];
+
+  function storageGet(k, def) {
+    try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; }
+  }
+  function storageSet(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    clearTimeout(window._tt);
+    window._tt = setTimeout(() => { t.style.display = "none"; }, 2600);
+  }
+
+  function fmtMoney(n) {
+    return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  // Device HWID
+  let hwid = storageGet("lnvm_device_hwid", null);
+  if (!hwid) {
+    const r = () => Math.floor(1000 + Math.random() * 8999).toString(16).toUpperCase().padStart(4, "0");
+    hwid = `LNVM-${r()}-${r()}-${r()}`;
+    storageSet("lnvm_device_hwid", hwid);
+  }
+  document.getElementById("modal-hwid").textContent = hwid;
+
+  // Tax Calculator (1B Threshold + Optimal Deduction + Method 1 vs Method 2)
+  function calcTax() {
+    const hh = Math.max(0, Number(document.getElementById("inp-hh").value) || 0);
+    const dv = Math.max(0, Number(document.getElementById("inp-dv").value) || 0);
+    const sx = Math.max(0, Number(document.getElementById("inp-sx").value) || 0);
+    const nds = Math.max(0, Number(document.getElementById("inp-nds").value) || 0);
+    const cp = Math.max(0, Number(document.getElementById("inp-cp").value) || 0);
+    const san = Math.max(0, Number(document.getElementById("inp-san").value) || 0);
+    const total = hh + dv + sx + nds;
+
+    if (total <= 1000000000) {
+      document.getElementById("tax-output").textContent = lang === "vi"
+        ? `Tổng doanh thu: ${fmtMoney(total)} đồng\n→ TỪ 1 TỶ TRỞ XUỐNG: KHÔNG nộp thuế GTGT & TNCN (NĐ 141/2026).\n→ Ghi sổ S1a-HKD, nộp Thông báo 01/TKN-CNKD trước 31/01 năm sau.`
+        : `Total Revenue: ${fmtMoney(total)} VND\n→ ≤ 1 BILLION VND: EXEMPT from VAT & PIT (Decree 141/2026).\n→ Keep S1a-HKD ledger, file Notice 01/TKN-CNKD by Jan 31.`;
+      return;
+    }
+
+    const sectors = [
+      { name: lang === "vi" ? "Nội dung số / Đại lý" : "Digital / Agency", dt: nds, vatR: 0.05, pitR: 0.05 },
+      { name: lang === "vi" ? "Dịch vụ" : "Services", dt: dv, vatR: 0.05, pitR: 0.02 },
+      { name: lang === "vi" ? "Sản xuất, vận tải" : "Manufacturing/Transport", dt: sx, vatR: 0.03, pitR: 0.015 },
+      { name: lang === "vi" ? "Hàng hóa" : "Goods", dt: hh, vatR: 0.01, pitR: 0.005 },
+    ].sort((a, b) => b.pitR - a.pitR);
+
+    let rem = 1000000000;
+    let totalVat = 0;
+    let totalPit1 = 0;
+    const lines = [];
+    for (const s of sectors) {
+      if (s.dt <= 0) continue;
+      const ded = Math.min(s.dt, rem);
+      rem -= ded;
+      const vat = s.dt * s.vatR;
+      const pit = (s.dt - ded) * s.pitR;
+      totalVat += vat;
+      totalPit1 += pit;
+      lines.push(`• ${s.name}: DT ${fmtMoney(s.dt)} | Trừ ${fmtMoney(ded)} | GTGT ${fmtMoney(vat)} + TNCN ${fmtMoney(pit)}`);
+    }
+    const net1 = Math.max(0, totalVat + totalPit1 - san);
+    const income = Math.max(0, total - cp);
+    const pitRate2 = total > 3000000000 ? 0.17 : 0.15;
+    const pit2 = income * pitRate2;
+    const rec = pit2 < totalPit1 ? (lang === "vi" ? "CÁCH 2 (Theo thu nhập)" : "METHOD 2 (Net Income)") : (lang === "vi" ? "CÁCH 1 (% Doanh thu)" : "METHOD 1 (% Revenue)");
+
+    document.getElementById("tax-output").textContent = (lang === "vi"
+      ? `Tổng DT 2026: ${fmtMoney(total)} đồng (Vượt 1 tỷ)\n` +
+        lines.join("\n") +
+        `\n──────────────────────────────────────\n` +
+        `• Cách 1 (% DT): GTGT ${fmtMoney(totalVat)} + TNCN ${fmtMoney(totalPit1)} - Sàn ${fmtMoney(san)} = ${fmtMoney(net1)} đ\n` +
+        `• Cách 2 (${Math.round(pitRate2 * 100)}% Thu nhập): TNCN = ${fmtMoney(pit2)} đ (Thu nhập ${fmtMoney(income)} đ)\n` +
+        `=> KHUYẾN NGHỊ: Chọn ${rec}.`
+      : `Total 2026 Revenue: ${fmtMoney(total)} VND (> 1B)\n` +
+        lines.join("\n") +
+        `\n──────────────────────────────────────\n` +
+        `• Method 1 (% Rev): VAT ${fmtMoney(totalVat)} + PIT ${fmtMoney(totalPit1)} - E-Com ${fmtMoney(san)} = ${fmtMoney(net1)} VND\n` +
+        `• Method 2 (${Math.round(pitRate2 * 100)}% Net): PIT = ${fmtMoney(pit2)} VND (Net Income ${fmtMoney(income)} VND)\n` +
+        `=> RECOMMEND: ${rec}.`);
+  }
+
+  // Ledger
+  function renderLedger() {
+    const box = document.getElementById("led-rows");
+    let sum = 0;
+    box.innerHTML = "";
+    ledger.forEach((r, idx) => {
+      sum += r.amt;
+      const div = document.createElement("div");
+      div.style.cssText = "background:var(--bg-input); border:1px solid var(--border);";
+      div.className = "p-2 rounded-lg flex items-center justify-between gap-2";
+      div.innerHTML = `<div class="min-w-0"><div class="font-bold truncate">${r.date} ${r.src} ${r.desc}</div><div style="color:var(--emerald);" class="font-extrabold">${fmtMoney(r.amt)} đ</div></div>`;
+      const del = document.createElement("button");
+      del.type = "button";
+      del.textContent = "✕";
+      del.className = "btn-sec px-2 py-1 min-h-[28px] text-xs shrink-0";
+      del.addEventListener("click", () => { ledger.splice(idx, 1); storageSet("lnvm_ledger", ledger); renderLedger(); });
+      div.appendChild(del);
+      box.appendChild(div);
+    });
+    document.getElementById("led-total").textContent = `${fmtMoney(sum)} đ`;
+  }
+
+  // Rental
+  function calcRental() {
+    const m = Math.max(0, Number(document.getElementById("ren-monthly").value) || 0);
+    const k = Math.max(1, Math.min(12, Number(document.getElementById("ren-months").value) || 12));
+    const total = m * k;
+    if (total <= 1000000000) {
+      document.getElementById("rent-output").textContent = `Tổng doanh thu cho thuê: ${fmtMoney(total)} đ\n→ ≤ 1 tỷ/năm: KHÔNG phải nộp GTGT & TNCN (NĐ 68/2026).`;
+    } else {
+      const vat = total * 0.05;
+      const pit = (total - 1000000000) * 0.05;
+      document.getElementById("rent-output").textContent = `Tổng doanh thu cho thuê: ${fmtMoney(total)} đ\n• GTGT 5% toàn bộ: ${fmtMoney(vat)} đ\n• TNCN 5% phần vượt 1 tỷ: ${fmtMoney(pit)} đ\n=> Tổng thuế (Mẫu 01/BĐS): ${fmtMoney(vat + pit)} đ`;
+    }
+  }
+
+  // Payroll & Late Interest
+  function calcPayroll() {
+    const gross = Math.max(0, Number(document.getElementById("pay-gross").value) || 0);
+    const npt = Math.max(0, Number(document.getElementById("pay-npt").value) || 0);
+    const hasBh = document.getElementById("pay-bh").value === "1";
+    const bhNld = hasBh ? gross * 0.105 : 0;
+    const bhHkd = hasBh ? gross * 0.215 : 0;
+    const tntt = Math.max(0, gross - bhNld - 15500000 - npt * 6200000);
+    const brackets = [[10e6, 0.05], [30e6, 0.10], [60e6, 0.20], [100e6, 0.30], [Infinity, 0.35]];
+    let pit = 0, prev = 0;
+    for (const [top, r] of brackets) {
+      if (tntt > prev) pit += (Math.min(tntt, top) - prev) * r;
+      prev = top;
+    }
+    const net = gross - bhNld - pit;
+    document.getElementById("pay-output").textContent = `• Lương Gross: ${fmtMoney(gross)} đ\n• BH NLĐ (10,5%): -${fmtMoney(bhNld)} đ\n• Thuế TNCN: -${fmtMoney(pit)} đ\n=> Thực nhận (Net): ${fmtMoney(net)} đ\n• Tổng chi phí HKD trả (+21,5% BH): ${fmtMoney(gross + bhHkd)} đ`;
+  }
+
+  // Knowledge Base
+  const KB = [
+    { tag: "NĐ 141/2026 & NĐ 68/2026", text: "Từ 01/01/2026 nâng ngưỡng miễn thuế GTGT & TNCN hộ kinh doanh lên 1 tỷ đồng/năm. Vượt 1 tỷ nộp theo quý (Mẫu 01/CNKD, hạn ngày cuối tháng đầu quý sau)." },
+    { tag: "NĐ 254/2026", text: "Hộ có doanh thu > 1 tỷ/năm bắt buộc dùng hóa đơn điện tử có mã hoặc từ máy tính tiền; đăng ký trong 30 ngày từ cuối quý vượt mốc." },
+    { tag: "TT 152/2025/TT-BTC", text: "≤ 1 tỷ ghi sổ S1a-HKD; > 1 tỷ (% doanh thu) ghi S2a-HKD; > 3 tỷ hoặc tính theo thu nhập dùng bộ S2b–S2e-HKD. Lưu tối thiểu 5 năm." },
+    { tag: "Sàn TMĐT (Shopee/TikTok/Lazada)", text: "Sàn có chức năng thanh toán sẽ khấu trừ và nộp thay thuế. Doanh thu xét mốc 1 tỷ vẫn bao gồm doanh thu trên sàn." },
+    { tag: "Cho thuê nhà (01/BĐS)", text: "Cho thuê BĐS > 1 tỷ/năm: GTGT 5% toàn bộ + TNCN 5% phần vượt 1 tỷ. Khai 2 lần (31/07, 31/01) hoặc 1 lần (31/01)." },
+    { tag: "Luật 108/2025 & 109/2025", text: "Tiền chậm nộp 0,03%/ngày. Giảm trừ gia cảnh TNCN từ 2026: bản thân 15,5 triệu/tháng, người phụ thuộc 6,2 triệu/tháng." }
+  ];
+
+  // Bind Events
+  document.querySelectorAll(".nav-tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".nav-tab").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      ["view-tax", "view-ledger", "view-rental", "view-payroll", "view-ai"].forEach(id => {
+        document.getElementById(id).classList.toggle("hidden", id !== btn.dataset.target);
+      });
+    });
+  });
+
+  document.getElementById("btn-theme").addEventListener("click", () => {
+    theme = theme === "dark" ? "light" : "dark";
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.classList.toggle("light", theme === "light");
+    document.getElementById("btn-theme").textContent = theme === "dark" ? "🌙" : "☀️";
+  });
+
+  document.getElementById("btn-lang").addEventListener("click", () => {
+    lang = lang === "vi" ? "en" : "vi";
+    document.getElementById("btn-lang").textContent = lang === "vi" ? "🇻🇳 VI" : "🇬🇧 EN";
+    document.getElementById("i18n-title").textContent = lang === "vi" ? "LNVMKCT HỘ KINH DOANH 2026" : "LNVMKCT HOUSEHOLD TAX 2026";
+    document.getElementById("nav-1").textContent = lang === "vi" ? "Tính Thuế" : "Tax Calc";
+    document.getElementById("nav-2").textContent = lang === "vi" ? "Sổ S1a/S2a" : "Ledger";
+    document.getElementById("nav-3").textContent = lang === "vi" ? "Thuê Nhà" : "Rental";
+    document.getElementById("nav-4").textContent = lang === "vi" ? "Lương/Lịch" : "Payroll";
+    document.getElementById("nav-5").textContent = lang === "vi" ? "AI & Luật" : "AI & Laws";
+    document.getElementById("btn-calc-tax").textContent = lang === "vi" ? "⚡ TÍNH THUẾ & SO SÁNH 2 CÁCH" : "⚡ CALCULATE & COMPARE";
+    calcTax();
+  });
+
+  document.getElementById("btn-calc-tax").addEventListener("click", calcTax);
+  document.getElementById("btn-add-led").addEventListener("click", () => {
+    const amt = Number(document.getElementById("led-amt").value) || 0;
+    if (amt <= 0) return;
+    ledger.unshift({
+      date: document.getElementById("led-date").value.trim() || "18/11/2026",
+      src: document.getElementById("led-src").value,
+      desc: document.getElementById("led-desc").value.trim() || "Bán hàng",
+      amt
+    });
+    storageSet("lnvm_ledger", ledger);
+    renderLedger();
+    showToast("Đã ghi thêm dòng vào sổ doanh thu!");
+  });
+
+  document.getElementById("btn-exp-csv").addEventListener("click", () => {
+    const csv = "\uFEFFngay,nguon,dien_giai,so_tien\n" + ledger.map(r => `${r.date},${r.src},"${r.desc}",${r.amt}`).join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
+    a.download = "So_doanh_thu_HKD_2026.csv";
+    a.click();
+    showToast("Đã tải xuống file Excel (.csv)!");
+  });
+
+  document.getElementById("btn-calc-rent").addEventListener("click", calcRental);
+  document.getElementById("btn-calc-pay").addEventListener("click", calcPayroll);
+  document.getElementById("btn-calc-late").addEventListener("click", () => {
+    const amt = Math.max(0, Number(document.getElementById("late-amt").value) || 0);
+    const days = Math.max(0, Number(document.getElementById("late-days").value) || 0);
+    document.getElementById("late-output").textContent = `Tiền chậm nộp (0,03%/ngày × ${days} ngày): ${fmtMoney(amt * 0.0003 * days)} đồng`;
+  });
+
+  document.getElementById("btn-dl-ics").addEventListener("click", () => {
+    const ics = [
+      "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//LNVMKCT2026//HKD//VI",
+      "BEGIN:VEVENT", "UID:hkd-q4-2026@lnvmkct", "DTSTART;VALUE=DATE:20270131",
+      "SUMMARY:Han nop to khai thue HKD Quy 4/2026 (01/CNKD)", "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("\r\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar;charset=utf-8;" }));
+    a.download = "Lich_Thue_HKD_2026.ics";
+    a.click();
+    showToast("Đã xuất file lịch .ics cho iPhone / Google Calendar!");
+  });
+
+  document.getElementById("btn-kb-search").addEventListener("click", () => {
+    const q = document.getElementById("ai-query").value.toLowerCase();
+    const hits = KB.filter(x => q.split(/\s+/).some(w => w.length > 1 && (x.tag + " " + x.text).toLowerCase().includes(w)));
+    document.getElementById("ai-output").textContent = (hits.length ? hits : KB).map(x => `[${x.tag}]\n${x.text}`).join("\n\n");
+  });
+
+  document.getElementById("btn-google-free").addEventListener("click", () => {
+    const q = encodeURIComponent(document.getElementById("ai-query").value.trim() + " thuế hộ kinh doanh Việt Nam 2026");
+    window.open(`https://www.google.com/search?q=${q}`, "_blank");
+  });
+
+  document.getElementById("btn-gemini-ask").addEventListener("click", async () => {
+    const key = document.getElementById("ai-gemini-key").value.trim();
+    const q = document.getElementById("ai-query").value.trim();
+    if (!key) { showToast("Vui lòng nhập Gemini API Key hoặc dùng nút Hỏi Chị Google!"); return; }
+    storageSet("lnvm_gemini_key", key);
+    const out = document.getElementById("ai-output");
+    out.textContent = "⏳ Đang kết nối Chuyên gia Thuế Google...";
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(key)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: "Bạn là Chuyên gia Thuế Hộ Kinh Doanh Việt Nam 2026 (NĐ 141/2026 mốc 1 tỷ, NĐ 68/2026, NĐ 254/2026, TT 152/2025)." }] },
+          contents: [{ role: "user", parts: [{ text: q }] }]
+        })
+      });
+      const data = await res.json();
+      out.textContent = data?.candidates?.[0]?.content?.parts?.[0]?.text || JSON.stringify(data);
+    } catch (e) {
+      out.textContent = "Lỗi kết nối mạng: " + e.message;
+    }
+  });
+
+  // License modal
+  const licModal = document.getElementById("lic-modal");
+  document.getElementById("btn-open-lic").addEventListener("click", () => { licModal.classList.remove("hidden"); licModal.classList.add("flex"); });
+  document.getElementById("btn-close-lic").addEventListener("click", () => { licModal.classList.add("hidden"); licModal.classList.remove("flex"); });
+  document.getElementById("btn-copy-hwid").addEventListener("click", () => {
+    if (navigator.clipboard) navigator.clipboard.writeText(hwid).catch(() => {});
+    else { const t = document.createElement("textarea"); t.value = hwid; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+    showToast("Đã sao chép Mã Thiết Bị: " + hwid);
+  });
+  document.getElementById("btn-activate-lic").addEventListener("click", () => {
+    const k = document.getElementById("inp-lic-key").value.trim().toUpperCase();
+    if (k.startsWith("LNVM-HKD2026-")) {
+      storageSet("lnvm_active_key", k);
+      document.getElementById("lic-sub-pill").textContent = "Đã kích hoạt • " + hwid;
+      licModal.classList.add("hidden"); licModal.classList.remove("flex");
+      showToast("Kích hoạt bản quyền thành công!");
+    } else {
+      showToast("Mã Key chưa đúng định dạng LNVM-HKD2026-...");
+    }
+  });
+
+  // Init
+  const savedLedger = storageGet("lnvm_ledger", null);
+  if (savedLedger) ledger = savedLedger;
+  document.getElementById("ai-gemini-key").value = storageGet("lnvm_gemini_key", "");
+  calcTax();
+  calcRental();
+  calcPayroll();
+  renderLedger();
+  document.getElementById("ai-output").textContent = KB.map(x => `[${x.tag}]\n${x.text}`).join("\n\n");
+})();
+</script>
+</body>
+</html>
