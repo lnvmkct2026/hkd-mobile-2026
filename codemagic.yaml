@@ -15,10 +15,26 @@ workflows:
           npx cap sync ios
       - name: Build Unsigned IPA
         script: |
+          set -e
           cd ios/App
-          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -sdk iphoneos CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO build SYMROOT=build
+          xcodebuild \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build_out \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+          APP_PATH=$(find build_out -name "App.app" -type d | head -n 1)
+          echo "Found App.app at: $APP_PATH"
+          test -f "$APP_PATH/Info.plist"
+          rm -rf Payload
           mkdir -p Payload
-          cp -r build/Release-iphoneos/App.app Payload/
-          zip -r ../../LNVMKCT_HKD_2026_unsigned.ipa Payload
+          ditto "$APP_PATH" Payload/App.app
+          zip -qry ../../LNVMKCT_HKD_2026_unsigned.ipa Payload
+          ls -lh ../../LNVMKCT_HKD_2026_unsigned.ipa
     artifacts:
       - LNVMKCT_HKD_2026_unsigned.ipa
